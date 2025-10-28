@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --- Configuration ---
-DOCKERHUB_USERNAME=troop60wa
+DOCKERHUB_USERNAME=trosar
 NEW_VERSION="latest"
 IMAGE_NAME="troop_60_router_image"
 

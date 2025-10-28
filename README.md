@@ -52,8 +52,12 @@ brew install orbstack
   sh 02_save_docker_image.sh
 ```
 
-## Deploy code to GitHub / Railway
+## Save code to GitHub
 * Run the below command in the root folder
 ```
-  sh 03_deploy_app.sh
+  git status
+  git diff
+  git add .
+  git commit -m "Message"
+  git push
 ```
