@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Troop 60 - Route Planner</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        form { background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #ddd; }
+        label { display: block; margin-top: 10px; font-weight: bold; }
+        input[type="text"], input[type="number"], input[type="password"] { width: 95%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #007bff; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; margin-top: 15px; }
+        button:hover { background-color: #0056b3; }
+        .error { color: red; font-weight: bold; margin-top: 10px; }
+        .results { border-top: 2px solid #007bff; padding-top: 20px; margin-top: 20px; }
+        .trip { border: 1px solid #ddd; padding: 10px; margin-bottom: 15px; border-radius: 4px; }
+        .trip strong { color: #007bff; }
+        .route { font-size: 0.9em; word-break: break-word; background: #eee; padding: 8px; border-radius: 4px; margin-top: 5px; }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img style="display:block; margin:auto; width:50%;" src="{{url_for('static', filename='scouting_america_troop_60.png')}}">
+        <h1 style="text-align: center;">Route Planner</h1>
+        <form id="route-form" method="POST">
+            <label for="church_address">Church Address (Start & End Location):</label>
+            <input type="text" id="church_address" name="church_address" value="22209 58th Ave W, Mountlake Terrace, WA 98043" required>
+
+            <label for="time_limit">Max Round Trip Time (minutes):</label>
+            <input type="number" id="time_limit" name="time_limit" value="90" required>
+
+            <label for="wait_time">Wait Time per Stop (minutes):</label>
+            <input type="number" id="wait_time" name="wait_time" value="10" required>
+            
+            <label for="passwd">Password:</label>
+            <input type="password" id="passwd" name="passwd" value="" required>
+
+            <p style="font-size: 0.8em; color: #666;">
+                Addresses are fetched from the configured Google Sheet URL automatically.
+            </p>
+
+            <button id="submit-button" type="submit">Plan Routes</button>
+        </form>
+        <div class="pleaseWaitBanner" style="display: none;">Please wait while we plan the routes... It may take some time...</div>
+
+        {% if error %}
+            <div class="error">
+                <p>Error: {{ error }}</p>
+            </div>
+        {% endif %}
+
+        {% if results %}
+        <div class="results">
+            <h2>Planning Complete</h2>
+            <p><strong>Total Trips Required:</strong> {{ results.total_trips }}</p>
+            <p><strong>Max Time Per Trip:</strong> {{ results.limit }} minutes (includes {{ results.wait }} min wait per stop)</p>
+            <hr>
+
+            {% for trip in results.trips %}
+            <div class="trip">
+                <strong>Trip {{ trip.trip_number }}:</strong>
+                <p>Estimated Total Time: <strong>{{ "%.2f"|format(trip.total_estimated_time) }} minutes</strong></p>
+                <div class="route">
+                    Route: <a href="https://www.google.com/maps/dir/{{ ' / '.join(trip.addresses) }}" target="_blank" title="Click to view route on Google Maps">Route Plan</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('route-form');
+            const submitButton = document.getElementById('submit-button');
+            
+            const resultsDiv = document.querySelector('.results');
+            const errorDiv = document.querySelector('.error');
+            const pleaseWaitBannerDiv = document.querySelector('.pleaseWaitBanner');
+
+            form.addEventListener('submit', function() {
+                // Hide previous results/errors
+                if (resultsDiv) {
+                    resultsDiv.style.display = 'none';
+                }
+                if (errorDiv) {
+                    errorDiv.style.display = 'none';
+                }
+
+                // Hide the button and show the pleaseWaitBanner
+                submitButton.style.display = 'none';
+                pleaseWaitBannerDiv.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
