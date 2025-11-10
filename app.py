@@ -16,9 +16,9 @@ coordinate_cache = {}
 
 # Column Indices (based on above CSV file)
 ADDRESS_COL_INDEX = 3 # Column D (4th column)
-LAT_COL_INDEX = 5     # Column F (6th column)
-LON_COL_INDEX = 6     # Column G (7th column)
-
+LAT_COL_INDEX = 11     # Column L (12th column)
+LON_COL_INDEX = 12     # Column M (13th column)
+TO_ROUT = 13           # Column N (14th column)
 
 
 # --- Core Logic Functions ---
