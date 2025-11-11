@@ -15,10 +15,10 @@ DEFAULT_CHURCH_COORDS = (47.797121, -122.310876)
 coordinate_cache = {}
 
 # Column Indices (based on above CSV file)
-ADDRESS_COL_INDEX = 3 # Column D (4th column)
-LAT_COL_INDEX = 11     # Column L (12th column)
-LON_COL_INDEX = 12     # Column M (13th column)
-TO_ROUT = 13           # Column N (14th column)
+# ADDRESS_COL_INDEX = 3 # Column D (4th column)
+# LAT_COL_INDEX = 11     # Column L (12th column)
+# LON_COL_INDEX = 12     # Column M (13th column)
+# TO_ROUTE = 13           # Column N (14th column)
 
 
 # --- Core Logic Functions ---
@@ -35,11 +35,17 @@ def get_addresses_from_sheet(url):
         
         csv_data = io.StringIO(response.text)
         reader = csv.reader(csv_data)
-        next(reader, None) # Skip the header row
+        headers = next(reader)
+        header_indices = {header.strip(): idx for idx, header in enumerate(headers)}
+        ADDRESS_COL_INDEX = header_indices.get("Tree Pickup Address")
+        LAT_COL_INDEX = header_indices.get("Lat")
+        LON_COL_INDEX = header_indices.get("Lng")
+        TO_ROUTE_INDEX = header_indices.get("ToRoute")
         
         addresses = []
         for row in reader:
-            if len(row) > LON_COL_INDEX:
+            # Skip the row if ToRoute is not Yes
+            if len(row) > TO_ROUTE_INDEX and row[TO_ROUTE_INDEX].strip().lower() == "yes":
                 address = row[ADDRESS_COL_INDEX].strip()
                 
                 try:
